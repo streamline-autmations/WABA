@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">magical-lobster-flip</string>
+    <string name="title_activity_main">magical-lobster-flip</string>
+    <string name="package_name">com.example.magicallobsterflip</string>
+    <string name="custom_url_scheme">com.example.magicallobsterflip</string>
+</resources>
