@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Contact, Message } from "@/data/chat";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, Loader2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 interface ChatWindowProps {
@@ -12,6 +12,7 @@ interface ChatWindowProps {
   messages: Message[];
   onSendMessage: (messageText: string) => void;
   onBack?: () => void;
+  isLoading: boolean;
 }
 
 export function ChatWindow({
@@ -19,6 +20,7 @@ export function ChatWindow({
   messages,
   onSendMessage,
   onBack,
+  isLoading,
 }: ChatWindowProps) {
   const [newMessage, setNewMessage] = useState("");
   const isMobile = useIsMobile();
@@ -29,8 +31,10 @@ export function ChatWindow({
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (!isLoading) {
+      scrollToBottom();
+    }
+  }, [messages, isLoading]);
 
   const handleSend = () => {
     if (newMessage.trim()) {
@@ -69,33 +73,41 @@ export function ChatWindow({
         </div>
       </div>
       <div className="flex-1 p-4 overflow-y-auto space-y-4">
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={cn(
-              "flex items-end gap-2",
-              message.direction === "Outgoing" ? "justify-end" : "justify-start"
-            )}
-          >
-            <div
-              className={cn(
-                "p-3 rounded-lg max-w-xs lg:max-w-md",
-                message.direction === "Outgoing"
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted"
-              )}
-            >
-              <p>{message.text}</p>
-              <p className="text-xs text-right mt-1 opacity-70">
-                {new Date(message.timestamp).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </p>
-            </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
-        ))}
-        <div ref={messagesEndRef} />
+        ) : (
+          <>
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={cn(
+                  "flex items-end gap-2",
+                  message.direction === "Outgoing" ? "justify-end" : "justify-start"
+                )}
+              >
+                <div
+                  className={cn(
+                    "p-3 rounded-lg max-w-xs lg:max-w-md",
+                    message.direction === "Outgoing"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted"
+                  )}
+                >
+                  <p>{message.text}</p>
+                  <p className="text-xs text-right mt-1 opacity-70">
+                    {new Date(message.timestamp).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </>
+        )}
       </div>
       <div className="p-4 border-t flex items-center gap-2">
         <Input

@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Contact } from "@/data/chat";
 import { cn } from "@/lib/utils";
 import { PlusCircle } from "lucide-react";
@@ -15,6 +16,7 @@ interface ContactListProps {
   setSearchQuery: (query: string) => void;
   statusFilter: "All" | "Active" | "Inactive";
   setStatusFilter: (status: "All" | "Active" | "Inactive") => void;
+  isLoading: boolean;
 }
 
 export function ContactList({
@@ -25,6 +27,7 @@ export function ContactList({
   setSearchQuery,
   statusFilter,
   setStatusFilter,
+  isLoading,
 }: ContactListProps) {
   return (
     <div className="flex flex-col h-full bg-card">
@@ -53,7 +56,19 @@ export function ContactList({
         </Tabs>
       </div>
       <div className="flex-1 overflow-y-auto">
-        {contacts.length > 0 ? (
+        {isLoading ? (
+          <div className="p-4 space-y-4">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center space-x-4">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="space-y-2 flex-1">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : contacts.length > 0 ? (
           contacts.map((contact) => (
             <div
               key={contact.id}
